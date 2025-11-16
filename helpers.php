@@ -1,5 +1,4 @@
 <?php
-// Validasi input siswa
 function validateStudentData($nama, $nis, $jenis_kelamin, $kelas, $jurusan) {
     $errors = [];
     
@@ -26,7 +25,6 @@ function validateStudentData($nama, $nis, $jenis_kelamin, $kelas, $jurusan) {
     return $errors;
 }
 
-// Cek apakah NIS sudah ada di database
 function checkNisExists($conn, $nis, $excludeId = null) {
     $query = "SELECT id FROM siswa WHERE nis = ?";
     $params = [$nis];
@@ -47,7 +45,6 @@ function checkNisExists($conn, $nis, $excludeId = null) {
     return mysqli_num_rows($result) > 0;
 }
 
-// Ambil data siswa berdasarkan ID
 function getStudentById($conn, $id) {
     $stmt = mysqli_prepare($conn, "SELECT * FROM siswa WHERE id = ?");
     mysqli_stmt_bind_param($stmt, "i", $id);
@@ -59,7 +56,6 @@ function getStudentById($conn, $id) {
     return $data;
 }
 
-// Simpan data siswa baru
 function createStudent($conn, $nama, $nis, $jenis_kelamin, $kelas, $jurusan) {
     $stmt = mysqli_prepare($conn, "INSERT INTO siswa (nama, nis, jenis_kelamin, kelas, jurusan) VALUES (?, ?, ?, ?, ?)");
     mysqli_stmt_bind_param($stmt, "sssss", $nama, $nis, $jenis_kelamin, $kelas, $jurusan);
@@ -69,7 +65,6 @@ function createStudent($conn, $nama, $nis, $jenis_kelamin, $kelas, $jurusan) {
     return $success;
 }
 
-// Update data siswa
 function updateStudent($conn, $id, $nama, $nis, $jenis_kelamin, $kelas, $jurusan) {
     $stmt = mysqli_prepare($conn, "UPDATE siswa SET nama=?, nis=?, jenis_kelamin=?, kelas=?, jurusan=? WHERE id=?");
     mysqli_stmt_bind_param($stmt, "sssssi", $nama, $nis, $jenis_kelamin, $kelas, $jurusan, $id);
@@ -79,7 +74,6 @@ function updateStudent($conn, $id, $nama, $nis, $jenis_kelamin, $kelas, $jurusan
     return $success;
 }
 
-// Hapus data siswa
 function deleteStudent($conn, $id) {
     $stmt = mysqli_prepare($conn, "DELETE FROM siswa WHERE id = ?");
     mysqli_stmt_bind_param($stmt, "i", $id);
@@ -89,7 +83,6 @@ function deleteStudent($conn, $id) {
     return $success;
 }
 
-// Ambil semua siswa
 function getAllStudents($conn) {
     $stmt = mysqli_prepare($conn, "SELECT * FROM siswa ORDER BY id DESC");
     mysqli_stmt_execute($stmt);

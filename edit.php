@@ -2,12 +2,10 @@
 include 'config.php';
 include 'helpers.php';
 
-// Mulai session untuk error handling
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Pastikan ada ID di URL
 if (!isset($_GET['id'])) {
     redirect("index.php");
 }
@@ -15,12 +13,10 @@ if (!isset($_GET['id'])) {
 $id = (int)$_GET['id'];
 $data = getStudentById($conn, $id);
 
-// Kalau data tidak ditemukan, balik ke index
 if (!$data) {
     redirect("index.php", "notfound");
 }
 
-// Handle submit form (update data)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama          = trim($_POST['nama'] ?? '');
     $nis           = trim($_POST['nis'] ?? '');
@@ -28,10 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $kelas         = trim($_POST['kelas'] ?? '');
     $jurusan       = trim($_POST['jurusan'] ?? '');
 
-    // Validasi
     $errors = validateStudentData($nama, $nis, $jenis_kelamin, $kelas, $jurusan);
 
-    // Cek NIS unik (kecuali untuk data yang sedang diedit)
     if (empty($errors) && checkNisExists($conn, $nis, $id)) {
         $errors[] = "NIS sudah digunakan. Silakan gunakan NIS lain.";
     }
@@ -40,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['errors']   = $errors;
         $_SESSION['old_data'] = $_POST;
     } else {
-        // Update data siswa (UPDATE, bukan INSERT)
         if (updateStudent($conn, $id, $nama, $nis, $jenis_kelamin, $kelas, $jurusan)) {
             redirect("index.php", "updated");
         } else {
@@ -50,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Ambil data lama + old_data kalau ada error
 $old = $_SESSION['old_data'] ?? [];
 $selectedJK = $old['jenis_kelamin'] ?? ($data['jenis_kelamin'] ?? '');
 ?>

@@ -2,12 +2,10 @@
 include 'config.php';
 include 'helpers.php';
 
-// Mulai session untuk error handling
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Handle submit form (tambah data)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama          = trim($_POST['nama'] ?? '');
     $nis           = trim($_POST['nis'] ?? '');
@@ -15,20 +13,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $kelas         = trim($_POST['kelas'] ?? '');
     $jurusan       = trim($_POST['jurusan'] ?? '');
 
-    // Validasi
     $errors = validateStudentData($nama, $nis, $jenis_kelamin, $kelas, $jurusan);
 
-    // Cek NIS unik
     if (empty($errors) && checkNisExists($conn, $nis)) {
         $errors[] = "NIS sudah digunakan. Silakan gunakan NIS lain.";
     }
 
     if (!empty($errors)) {
-        // Simpan error & data lama ke session, tetap di halaman ini
         $_SESSION['errors']   = $errors;
         $_SESSION['old_data'] = $_POST;
     } else {
-        // Simpan data siswa (INSERT)
         if (createStudent($conn, $nama, $nis, $jenis_kelamin, $kelas, $jurusan)) {
             redirect("index.php", "created");
         } else {
@@ -38,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Old data buat repopulate form
 $old = $_SESSION['old_data'] ?? [];
 $selectedJK = $old['jenis_kelamin'] ?? '';
 ?>

@@ -1,6 +1,3 @@
-// Form validation and minimal UI behaviors retained.
-
-// ==================== FORM VALIDATION REAL-TIME ====================
 function initFormValidation() {
     const form = document.getElementById('formSiswa');
     if (!form) return;
@@ -50,7 +47,6 @@ function validateField(field) {
         }
     }
     
-    // Update visual feedback
     if (field.value.trim() === '') {
         field.classList.remove('valid', 'invalid');
     } else if (isValid) {
@@ -61,16 +57,13 @@ function validateField(field) {
         field.classList.add('invalid');
     }
     
-    // Update hint text (uses element IDs like 'err-nama', 'err-nis')
     const hintEl = document.getElementById('err-' + field.name);
     if (hintEl) {
         hintEl.textContent = errorMsg;
     }
 }
 
-// MODAL KONFIRMASI DELETE
 function confirmDelete(id, nama) {
-    // Buat modal overlay jika belum ada
     let modalOverlay = document.getElementById('deleteModal');
     
     if (!modalOverlay) {
@@ -91,7 +84,6 @@ function confirmDelete(id, nama) {
         `;
         document.body.appendChild(modalOverlay);
         
-        // Tutup modal saat klik overlay
         modalOverlay.addEventListener('click', function(e) {
             if (e.target === modalOverlay) {
                 closeDeleteModal();
@@ -99,14 +91,11 @@ function confirmDelete(id, nama) {
         });
     }
     
-    // Update konten modal
     const modalBody = document.getElementById('modalBody');
     modalBody.innerHTML = `Apakah Anda yakin ingin menghapus data siswa: <strong>${nama}</strong>?`;
     
-    // Simpan ID untuk fungsi executeDelete
     window.deleteId = id;
     
-    // Tambahkan event listener untuk tombol konfirmasi
     const confirmBtn = document.getElementById('confirmDeleteBtn');
     if (confirmBtn) {
         confirmBtn.onclick = function() {
@@ -114,7 +103,6 @@ function confirmDelete(id, nama) {
         };
     }
     
-    // Tampilkan modal
     modalOverlay.classList.add('show');
 }
 
@@ -129,21 +117,18 @@ function executeDelete(id) {
     window.location.href = 'hapus.php?id=' + id;
 }
 
-// AUTO-HIDE ALERT MESSAGES
 document.addEventListener('DOMContentLoaded', function () {
     const alertMessage = document.getElementById('alertMessage');
     
     if (alertMessage) {
-        // Auto-hide setelah 5 detik
         setTimeout(function() {
             alertMessage.classList.add('fade-out');
             setTimeout(function() {
                 alertMessage.remove();
-            }, 300); // Tunggu animasi fade-out selesai
+            }, 300); 
         }, 5000);
     }
     
-    // LOADING STATE PADA FORM SUBMIT
     const form = document.getElementById('formSiswa');
     const btnSubmit = document.getElementById('btnSubmit');
     
@@ -153,7 +138,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const btnLoading = btnSubmit.querySelector('.btn-loading');
             
             if (btnText && btnLoading) {
-                // Tampilkan loading state
                 btnText.style.display = 'none';
                 btnLoading.style.display = 'inline';
                 btnSubmit.disabled = true;
@@ -161,7 +145,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     
-    // VALIDASI FORM CLIENT-SIDE
     if (form) {
         form.addEventListener('submit', function (e) {
             let isValid = true;
@@ -178,14 +161,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const errKelas   = document.getElementById('err-kelas');
             const errJurusan = document.getElementById('err-jurusan');
 
-            // Clear previous errors
             if (errNama)    errNama.textContent    = '';
             if (errNis)     errNis.textContent     = '';
             if (errJk)      errJk.textContent      = '';
             if (errKelas)   errKelas.textContent   = '';
             if (errJurusan) errJurusan.textContent = '';
 
-            // Validasi Nama
             if (nama && nama.value.trim() === '') {
                 if (errNama) errNama.textContent = 'Nama wajib diisi.';
                 isValid = false;
@@ -194,7 +175,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 isValid = false;
             }
 
-            // Validasi NIS
             if (nis && nis.value.trim() === '') {
                 if (errNis) errNis.textContent = 'NIS wajib diisi.';
                 isValid = false;
@@ -206,13 +186,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 isValid = false;
             }
 
-            // Validasi Jenis Kelamin
             if (jk && jk.value.trim() === '') {
                 if (errJk) errJk.textContent = 'Pilih jenis kelamin.';
                 isValid = false;
             }
 
-            // Validasi Kelas
             if (kelas && kelas.value.trim() === '') {
                 if (errKelas) errKelas.textContent = 'Kelas wajib diisi.';
                 isValid = false;
@@ -221,7 +199,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 isValid = false;
             }
 
-            // Validasi Jurusan
             if (jurusan && jurusan.value.trim() === '') {
                 if (errJurusan) errJurusan.textContent = 'Jurusan wajib diisi.';
                 isValid = false;
@@ -232,7 +209,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (!isValid) {
                 e.preventDefault();
-                // Reset loading state jika validasi gagal
                 if (btnSubmit) {
                     const btnText = btnSubmit.querySelector('.btn-text');
                     const btnLoading = btnSubmit.querySelector('.btn-loading');
@@ -245,18 +221,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
         
-        // Validasi real-time untuk NIS (hanya angka)
         const nis = document.getElementById('nis');
         if (nis) {
             nis.addEventListener('input', function(e) {
-                // Hanya izinkan angka
                 this.value = this.value.replace(/[^0-9]/g, '');
             });
         }
     }
 });
 
-// Initialize only the form validation (other UI features were reverted)
 document.addEventListener('DOMContentLoaded', function() {
     initFormValidation();
 });

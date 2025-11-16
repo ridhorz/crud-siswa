@@ -8,11 +8,9 @@ if (!isset($_GET['id'])) {
 
 $id = (int)$_GET['id'];
 
-// Cek apakah data ada sebelum menghapus
 $data = getStudentById($conn, $id);
 
 if ($data) {
-    // Data ada, lakukan penghapusan
     if (deleteStudent($conn, $id)) {
         redirect("index.php", "deleted");
     } else {

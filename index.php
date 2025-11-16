@@ -2,12 +2,10 @@
 include 'config.php';
 include 'helpers.php';
 
-// Mulai session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Ambil semua data siswa
 $result = getAllStudents($conn);
 ?>
 <!DOCTYPE html>
@@ -51,7 +49,7 @@ $result = getAllStudents($conn);
                     }
                 },
                 columnDefs: [
-                    { orderable: false, targets: 6 } // kolom Aksi tidak bisa sort
+                    { orderable: false, targets: 6 }
                 ]
             });
         });
@@ -59,7 +57,6 @@ $result = getAllStudents($conn);
 </head>
 <body>
 
-<!-- Main layout (sidebar and extra toggles removed) -->
 <div class="page-wrapper">
 
     <h1 class="title-main">Data Siswa</h1>
