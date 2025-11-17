@@ -58,9 +58,12 @@ function validateField(field) {
     }
     
     const hintEl = document.getElementById('err-' + field.name);
-    if (hintEl) {
-        hintEl.textContent = errorMsg;
-    }
+        // Update hint text (map jenis_kelamin -> 'err-jk', others -> 'err-<name>')
+        var hintId = field.name === 'jenis_kelamin' ? 'err-jk' : 'err-' + field.name;
+        const hintEl = document.getElementById(hintId);
+        if (hintEl) {
+            hintEl.textContent = errorMsg;
+        }
 }
 
 function confirmDelete(id, nama) {

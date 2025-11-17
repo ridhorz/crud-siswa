@@ -5,8 +5,12 @@ include 'helpers.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
-$result = getAllStudents($conn);
+    
+    $result = getAllStudents($conn);
+    $students = [];
+    while ($r = mysqli_fetch_assoc($result)) {
+        $students[] = $r;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -111,7 +115,7 @@ $result = getAllStudents($conn);
                 </tr>
                 </thead>
                 <tbody>
-                <?php $no = 1; while ($row = mysqli_fetch_assoc($result)): ?>
+                <?php $no = 1; foreach ($students as $row): ?>
                     <tr>
                         <td><?= $no++; ?></td>
                         <td><?= htmlspecialchars($row['nama']); ?></td>
@@ -134,14 +138,14 @@ $result = getAllStudents($conn);
                             </button>
                         </td>
                     </tr>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
 
         
 
-        <?php if (mysqli_num_rows(getAllStudents($conn)) == 0): ?>
+        <?php if (count($students) === 0): ?>
             <div class="no-data-note">
                 Belum ada data siswa. Silakan tambah data terlebih dahulu.
             </div>

@@ -1,27 +1,28 @@
 <?php
 function validateStudentData($nama, $nis, $jenis_kelamin, $kelas, $jurusan) {
+    // Return associative array of field => message (only for fields with errors)
     $errors = [];
-    
+
     if (empty($nama) || strlen($nama) < 2 || strlen($nama) > 100) {
-        $errors[] = "Nama harus diisi (2-100 karakter).";
+        $errors['nama'] = "Nama harus diisi (2-100 karakter).";
     }
-    
+
     if (empty($nis) || !preg_match('/^[0-9]+$/', $nis) || strlen($nis) > 20) {
-        $errors[] = "NIS harus diisi dengan angka (maksimal 20 digit).";
+        $errors['nis'] = "NIS harus diisi dengan angka (maksimal 20 digit).";
     }
-    
+
     if (empty($jenis_kelamin) || !in_array($jenis_kelamin, ['Laki-laki', 'Perempuan'])) {
-        $errors[] = "Jenis kelamin harus dipilih.";
+        $errors['jenis_kelamin'] = "Jenis kelamin harus dipilih.";
     }
-    
+
     if (empty($kelas) || strlen($kelas) > 50) {
-        $errors[] = "Kelas harus diisi (maksimal 50 karakter).";
+        $errors['kelas'] = "Kelas harus diisi (maksimal 50 karakter).";
     }
-    
+
     if (empty($jurusan) || strlen($jurusan) > 100) {
-        $errors[] = "Jurusan harus diisi (maksimal 100 karakter).";
+        $errors['jurusan'] = "Jurusan harus diisi (maksimal 100 karakter).";
     }
-    
+
     return $errors;
 }
 
@@ -29,20 +30,32 @@ function checkNisExists($conn, $nis, $excludeId = null) {
     $query = "SELECT id FROM siswa WHERE nis = ?";
     $params = [$nis];
     $types = "s";
-    
+
     if ($excludeId !== null) {
         $query .= " AND id != ?";
         $params[] = $excludeId;
         $types .= "i";
     }
-    
+
     $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, $types, ...$params);
+    if ($stmt === false) {
+        return false;
+    }
+
+    // Bind params safely (mysqli_stmt_bind_param requires references)
+    $bindParams = array_merge([$types], $params);
+    $tmp = [];
+    foreach ($bindParams as $key => $value) {
+        $tmp[$key] = &$bindParams[$key];
+    }
+    array_unshift($tmp, $stmt);
+    call_user_func_array('mysqli_stmt_bind_param', $tmp);
+
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     mysqli_stmt_close($stmt);
-    
-    return mysqli_num_rows($result) > 0;
+
+    return $result ? mysqli_num_rows($result) > 0 : false;
 }
 
 function getStudentById($conn, $id) {

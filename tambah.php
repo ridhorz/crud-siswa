@@ -16,17 +16,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = validateStudentData($nama, $nis, $jenis_kelamin, $kelas, $jurusan);
 
     if (empty($errors) && checkNisExists($conn, $nis)) {
-        $errors[] = "NIS sudah digunakan. Silakan gunakan NIS lain.";
+        $errors['nis'] = "NIS sudah digunakan. Silakan gunakan NIS lain.";
     }
 
     if (!empty($errors)) {
-        $_SESSION['errors']   = $errors;
+        // store per-field errors
+        $_SESSION['field_errors'] = $errors;
         $_SESSION['old_data'] = $_POST;
     } else {
         if (createStudent($conn, $nama, $nis, $jenis_kelamin, $kelas, $jurusan)) {
             redirect("index.php", "created");
         } else {
-            $_SESSION['errors']   = ["Terjadi kesalahan: " . mysqli_error($conn)];
+            $_SESSION['field_errors'] = ['general' => "Terjadi kesalahan: " . mysqli_error($conn)];
             $_SESSION['old_data'] = $_POST;
         }
     }
@@ -58,13 +59,11 @@ $selectedJK = $old['jenis_kelamin'] ?? '';
 
     <div class="form-card">
         <div class="form-inner">
-            <?php if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])): ?>
+            <?php $field_errors = $_SESSION['field_errors'] ?? []; ?>
+            <?php if (!empty($field_errors) && isset($field_errors['general'])): ?>
                 <div class="alert alert-error">
-                    <?php foreach ($_SESSION['errors'] as $error): ?>
-                        <div><?= htmlspecialchars($error) ?></div>
-                    <?php endforeach; ?>
+                    <?= htmlspecialchars($field_errors['general']) ?>
                 </div>
-                <?php unset($_SESSION['errors']); ?>
             <?php endif; ?>
 
             <form id="formSiswa" action="" method="post" novalidate>
@@ -78,7 +77,7 @@ $selectedJK = $old['jenis_kelamin'] ?? '';
                         maxlength="100"
                         placeholder="Masukkan nama lengkap"
                     >
-                    <div class="input-hint" id="err-nama"></div>
+                    <div class="input-hint" id="err-nama"><?= htmlspecialchars($field_errors['nama'] ?? '') ?></div>
                 </div>
 
                 <div class="form-group">
@@ -91,7 +90,7 @@ $selectedJK = $old['jenis_kelamin'] ?? '';
                         maxlength="20"
                         placeholder="Masukkan NIS"
                     >
-                    <div class="input-hint" id="err-nis"></div>
+                    <div class="input-hint" id="err-nis"><?= htmlspecialchars($field_errors['nis'] ?? '') ?></div>
                 </div>
 
                 <div class="form-group">
@@ -101,7 +100,7 @@ $selectedJK = $old['jenis_kelamin'] ?? '';
                         <option value="Laki-laki" <?= $selectedJK === 'Laki-laki' ? 'selected' : ''; ?>>Laki-laki</option>
                         <option value="Perempuan" <?= $selectedJK === 'Perempuan' ? 'selected' : ''; ?>>Perempuan</option>
                     </select>
-                    <div class="input-hint" id="err-jk"></div>
+                    <div class="input-hint" id="err-jk"><?= htmlspecialchars($field_errors['jenis_kelamin'] ?? '') ?></div>
                 </div>
 
                 <div class="form-group">
@@ -114,7 +113,7 @@ $selectedJK = $old['jenis_kelamin'] ?? '';
                         placeholder="XII RPL 2"
                         maxlength="50"
                     >
-                    <div class="input-hint" id="err-kelas"></div>
+                    <div class="input-hint" id="err-kelas"><?= htmlspecialchars($field_errors['kelas'] ?? '') ?></div>
                 </div>
 
                 <div class="form-group">
@@ -127,7 +126,7 @@ $selectedJK = $old['jenis_kelamin'] ?? '';
                         placeholder="Rekayasa Perangkat Lunak"
                         maxlength="100"
                     >
-                    <div class="input-hint" id="err-jurusan"></div>
+                    <div class="input-hint" id="err-jurusan"><?= htmlspecialchars($field_errors['jurusan'] ?? '') ?></div>
                 </div>
 
                 <div class="form-actions">
@@ -143,6 +142,6 @@ $selectedJK = $old['jenis_kelamin'] ?? '';
 
     <p class="footer-text">Idhoo RZ © <?= date('Y'); ?></p>
 </div>
-<?php unset($_SESSION['old_data']); ?>
+<?php unset($_SESSION['old_data'], $_SESSION['field_errors']); ?>
 </body>
 </html>
