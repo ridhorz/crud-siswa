@@ -1,11 +1,14 @@
 # CRUD Siswa
 
+<img width="1535" height="665" alt="Screenshot 2025-12-05 182621" src="https://github.com/user-attachments/assets/c79ccaaa-6259-4252-adf6-5987bb5e6397" />
+
 Aplikasi CRUD sederhana untuk mengelola data siswa menggunakan bahasa pemrograman (PHP & MySQL). Aplikasi ini memungkinkan Anda menambahkan, melihat, mengedit, dan menghapus data siswa:
 - Nama
 - NIS
 - Jenis Kelamin
 - Kelas
 - Jurusan
+
 
 ## Fitur Utama
 
